@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using OrderApi.Functions.Models;
 using System.Text.Json;
 using OrderApi.Functions.Idempotency;
+using OrderApi.Functions.Messaging;
 
 namespace OrderApi.Functions;
 
@@ -14,6 +15,7 @@ public class CreateOrderFunction
 {
     private readonly ILogger<CreateOrderFunction> _logger;
     private readonly IIdempotencyStore _idempotencyStore;
+    private readonly IOrderPublisher _publisher;
 
     private static readonly JsonSerializerOptions JsonOptions =
     new()
@@ -21,10 +23,11 @@ public class CreateOrderFunction
         PropertyNameCaseInsensitive = true
     };
 
-    public CreateOrderFunction(ILogger<CreateOrderFunction> logger, IIdempotencyStore idempotencyStore)
+    public CreateOrderFunction(ILogger<CreateOrderFunction> logger, IIdempotencyStore idempotencyStore, IOrderPublisher publisher)
     {
         _logger = logger;
         _idempotencyStore = idempotencyStore;
+        _publisher = publisher;
     }
 
     [Function("CreateOrder")]
@@ -79,6 +82,14 @@ public class CreateOrderFunction
         {
             _idempotencyStore.Set(idempotencyKey, result);
         }
+
+        await _publisher.PublishAsync(new CreateOrderMessage( // send to service bus queue
+                order.OrderId,
+                order.CustomerId,
+                order.Amount,
+                correlationId,
+                DateTimeOffset.UtcNow
+            ));
 
         var response = req.CreateResponse(HttpStatusCode.Accepted); // 202: request has been accepted for processing, but the processing has not been finished yet
         await response.WriteAsJsonAsync(result);
