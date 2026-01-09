@@ -416,3 +416,14 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Terraform
+**/.terraform/*
+**/*.tfstate
+**/*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars.json
+
+# Azure Functions local settings (secrets)
+**/local.settings.json
