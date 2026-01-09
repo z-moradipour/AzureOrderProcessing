@@ -14,6 +14,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderProcessor.Functions", "OrderProcessor.Functions\OrderProcessor.Functions.csproj", "{B57AA981-DA35-4E46-97A9-119B17DAF4B6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infra", "Infra", "{AC7A0BC7-FB06-476A-8D17-5E5448B6C6FC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Terraform", "Terraform", "{0B6F6CC9-1322-4550-AAD4-CCF6D88536E3}"
+	ProjectSection(SolutionItems) = preProject
+		main.tf = main.tf
+		outputs.tf = outputs.tf
+		terraform.tfvars = terraform.tfvars
+		variables.tf = variables.tf
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +61,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0B6F6CC9-1322-4550-AAD4-CCF6D88536E3} = {AC7A0BC7-FB06-476A-8D17-5E5448B6C6FC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {78A2BBE5-1D45-4E49-A402-F0ED869B9371}

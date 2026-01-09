@@ -1,5 +1,9 @@
 name: CI
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   push:
     branches: [ "main" ]
@@ -40,6 +44,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
@@ -54,6 +65,11 @@ jobs:
       - name: Terraform validate
         run: terraform validate
 
-      - name: Terraform plan (placeholder)
-        run: |
-          echo "Plan step will be enabled after adding Azure credentials (OIDC/SP)."
+      - name: Terraform plan
+        env:
+          ARM_USE_OIDC: true
+          ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+          ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+        run: terraform plan -input=false
+
