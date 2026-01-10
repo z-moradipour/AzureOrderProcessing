@@ -33,6 +33,31 @@ jobs:
       - name: Test
         run: dotnet test --configuration Release --no-build
 
+  deploy_order_api:
+    name: Deploy OrderApi.Functions to Azure
+    runs-on: windows-latest
+    needs: [build_test]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Publish Function App
+        run: dotnet publish ./OrderApi.Functions/OrderApi.Functions.csproj -c Release -o ./publish
+
+      - name: Deploy to Azure Functions
+        uses: Azure/functions-action@v1
+        with:
+          app-name: fa-order-processing-dev
+          package: ./publish
+          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+
   terraform_validate_plan:
     name: Terraform - fmt/validate/plan
     runs-on: ubuntu-latest
